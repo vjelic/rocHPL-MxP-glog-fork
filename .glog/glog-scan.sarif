@@ -12,7 +12,7 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "glog-0df01726-4685-44d8-bc70-64db5a66061f",
+              "id": "glog-f1162774-846c-4442-bcb1-8e570513ba3c",
               "help": {
                 "text": ""
               },
@@ -23,7 +23,7 @@
               }
             },
             {
-              "id": "glog-b2ad7095-6dbd-4834-9d11-db73869d3270",
+              "id": "glog-6c26c958-a5a6-4c72-a9d7-4185a2aa29df",
               "help": {
                 "text": ""
               },
@@ -34,7 +34,7 @@
               }
             },
             {
-              "id": "glog-2c7cc7e2-d6eb-4ee3-ae0f-0a223a8e98cd",
+              "id": "glog-d239d392-21ca-4758-a5be-e9298ae69f9c",
               "help": {
                 "text": ""
               },
@@ -45,7 +45,18 @@
               }
             },
             {
-              "id": "glog-e68d2b23-4de6-42ef-9387-12ddd0f53aa9",
+              "id": "glog-7507dac9-9e71-4449-afe0-740c5a0e4b8b",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            },
+            {
+              "id": "glog-27fde195-98f0-4009-bf27-1a9026cb4896",
               "help": {
                 "text": ""
               },
@@ -67,70 +78,7 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "glog-0df01726-4685-44d8-bc70-64db5a66061f",
-          "kind": "fail",
-          "level": "note",
-          "message": {},
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 639,
-                  "startColumn": 18,
-                  "endLine": 639,
-                  "endColumn": 33,
-                  "charOffset": 20313,
-                  "charLength": 15,
-                  "snippet": {
-                    "text": "malloc((size_t)",
-                    "rendered": {
-                      "text": "malloc((size_t)",
-                      "markdown": "`malloc((size_t)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 20313,
-                        "charLength": 15
-                      },
-                      "insertedContent": {
-                        "text": "calloc(<number of elements>, <size of each element>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-b2ad7095-6dbd-4834-9d11-db73869d3270",
+          "ruleId": "glog-d239d392-21ca-4758-a5be-e9298ae69f9c",
           "kind": "fail",
           "level": "note",
           "message": {},
@@ -216,7 +164,7 @@
           }
         },
         {
-          "ruleId": "glog-2c7cc7e2-d6eb-4ee3-ae0f-0a223a8e98cd",
+          "ruleId": "glog-f1162774-846c-4442-bcb1-8e570513ba3c",
           "kind": "fail",
           "level": "note",
           "message": {},
@@ -227,17 +175,17 @@
                   "uri": "src/hplmxp_pinfo.cpp"
                 },
                 "region": {
-                  "startLine": 497,
-                  "startColumn": 19,
-                  "endLine": 497,
-                  "endColumn": 30,
-                  "charOffset": 16194,
-                  "charLength": 11,
+                  "startLine": 639,
+                  "startColumn": 18,
+                  "endLine": 639,
+                  "endColumn": 33,
+                  "charOffset": 20313,
+                  "charLength": 15,
                   "snippet": {
-                    "text": "strlen(num)",
+                    "text": "malloc((size_t)",
                     "rendered": {
-                      "text": "strlen(num)",
-                      "markdown": "`strlen(num)`"
+                      "text": "malloc((size_t)",
+                      "markdown": "`malloc((size_t)`"
                     }
                   },
                   "sourceLanguage": "cpp"
@@ -248,7 +196,7 @@
           "fixes": [
             {
               "description": {
-                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
               },
               "artifactChanges": [
                 {
@@ -258,34 +206,11 @@
                   "replacements": [
                     {
                       "deletedRegion": {
-                        "charOffset": 16194,
-                        "charLength": 11
+                        "charOffset": 20313,
+                        "charLength": 15
                       },
                       "insertedContent": {
-                        "text": "strlen_s(num, <size of num>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "description": {
-                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 16194,
-                        "charLength": 11
-                      },
-                      "insertedContent": {
-                        "text": "strnlen(num, <size of num>)"
+                        "text": "calloc(<number of elements>, <size of each element>)"
                       }
                     }
                   ]
@@ -302,7 +227,70 @@
           }
         },
         {
-          "ruleId": "glog-e68d2b23-4de6-42ef-9387-12ddd0f53aa9",
+          "ruleId": "glog-7507dac9-9e71-4449-afe0-740c5a0e4b8b",
+          "kind": "fail",
+          "level": "note",
+          "message": {},
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 620,
+                  "startColumn": 18,
+                  "endLine": 620,
+                  "endColumn": 33,
+                  "charOffset": 19738,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "malloc((size_t)",
+                    "rendered": {
+                      "text": "malloc((size_t)",
+                      "markdown": "`malloc((size_t)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 19738,
+                        "charLength": 15
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-27fde195-98f0-4009-bf27-1a9026cb4896",
           "kind": "fail",
           "level": "note",
           "message": {},
