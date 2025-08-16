@@ -12,9 +12,10 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "glog-f1162774-846c-4442-bcb1-8e570513ba3c",
+              "id": "glog-13527d42-55b0-41ec-b4ee-c88850946f78",
               "help": {
-                "text": ""
+                "text": "",
+                "markdown": "### Description\n\nThe \"Detected Issue with C Function (malloc)\" vulnerability in C++ arises when the `malloc` function is used improperly, potentially leading to memory allocation issues such as buffer overflows, memory leaks, or improper handling of null pointers. This vulnerability can occur when the size parameter passed to `malloc` is incorrect, unchecked, or derived from untrusted sources, leading to undefined behavior or security vulnerabilities.\n\n### General Mitigation Advice\n\n1. **Input Validation**: Always validate input sizes before using them in memory allocation functions like `malloc`.\n2. **Check Return Values**: Always check the return value of `malloc` to ensure that memory allocation was successful.\n3. **Use Safer Alternatives**: Consider using safer alternatives like `new` in C++ or smart pointers which automatically manage memory.\n4. **Free Allocated Memory**: Ensure that all allocated memory is properly freed to avoid memory leaks.\n5. **Limit Memory Usage**: Implement limits on memory usage to prevent excessive allocation that could lead to denial of service.\n\n### Source Code Fix Recommendation\n\n```cpp\n#include <iostream>\n#include <cstdlib> // Required for malloc and free\n\nint main() {\n    size_t size = 10; // Example size, should be validated\n    int* ptr = (int*)malloc(size * sizeof(int));\n\n    if (ptr == nullptr) {\n        std::cerr << \"Memory allocation failed\" << std::endl;\n        return 1;\n    }\n\n    // Use the allocated memory\n    for (size_t i = 0; i < size; ++i) {\n        ptr[i] = i;\n    }\n\n    // Free the allocated memory\n    free(ptr);\n\n    return 0;\n}\n```\n\n### Library Dependencies\n\n- `<cstdlib>`: Required for `malloc` and `free`.\n- `<iostream>`: Required for input/output operations.\n\n### Relevant Links\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-401: Missing Release of Memory after Effective Lifetime](https://cwe.mitre.org/data/definitions/401.html)"
               },
               "properties": {
                 "tags": [
@@ -23,9 +24,10 @@
               }
             },
             {
-              "id": "glog-6c26c958-a5a6-4c72-a9d7-4185a2aa29df",
+              "id": "glog-a6524826-b853-4b0e-92e7-489113ecbccc",
               "help": {
-                "text": ""
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen()` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen()` will continue reading memory beyond the intended boundary, leading to a buffer overflow vulnerability. This can result in crashes, incorrect behavior, or potential execution of malicious code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. Be careful when manipulating strings, especially when using functions like `strcpy()`, `strcat()`, and `strlen()`. Consider using safer alternatives that take the size of the buffer as a parameter, such as `strncpy()`, `strncat()`, and `strnlen()`.\n\n## Source Code Fix Recommendation\n\nInstead of using `strlen(num)`, use `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of the string. This will prevent `strnlen()` from reading beyond the end of the buffer.\n\n```cpp\n#include <string.h>\n\n#define MAX_LEN 100\n\nchar num[MAX_LEN + 1];  // +1 for the null character\n\n// ...\n\nsize_t len = strnlen(num, MAX_LEN);\n```\n\n## Library Dependencies\n\nThe `strlen()` and `strnlen()` functions are part of the C standard library, so you need to include the `<string.h>` header.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
               },
               "properties": {
                 "tags": [
@@ -34,9 +36,10 @@
               }
             },
             {
-              "id": "glog-d239d392-21ca-4758-a5be-e9298ae69f9c",
+              "id": "glog-af905d00-2061-46a4-92ae-baa2cbd66f3f",
               "help": {
-                "text": ""
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen()` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen()` will continue reading memory beyond the intended boundary, leading to a buffer overflow vulnerability. This can result in crashes, incorrect behavior, or potential execution of malicious code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. Be careful when manipulating strings, especially when using functions like `strcpy()`, `strcat()`, and `strlen()`. Consider using safer alternatives that take the size of the buffer as a parameter, such as `strncpy()`, `strncat()`, and `strnlen()`.\n\n## Source Code Fix Recommendation\n\nInstead of using `strlen(num)`, use `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of the string. This will prevent `strnlen()` from reading beyond the end of the buffer.\n\n```cpp\n#include <string.h>\n\n#define MAX_LEN 100\n\nchar num[MAX_LEN + 1];  // +1 for the null character\n\n// ...\n\nsize_t len = strnlen(num, MAX_LEN);\n```\n\n## Library Dependencies\n\nThe `strlen()` and `strnlen()` functions are part of the C standard library, so you need to include the `<string.h>` header.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
               },
               "properties": {
                 "tags": [
@@ -45,20 +48,10 @@
               }
             },
             {
-              "id": "glog-7507dac9-9e71-4449-afe0-740c5a0e4b8b",
+              "id": "glog-5ad8cd43-c657-45d6-8d09-c31d3464b087",
               "help": {
-                "text": ""
-              },
-              "properties": {
-                "tags": [
-                  "DS161085"
-                ]
-              }
-            },
-            {
-              "id": "glog-27fde195-98f0-4009-bf27-1a9026cb4896",
-              "help": {
-                "text": ""
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen()` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen()` will continue reading memory beyond the intended boundary, leading to a buffer overflow vulnerability. This can result in crashes, incorrect behavior, or potential execution of malicious code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. Be careful when manipulating strings, especially when using functions like `strcpy()`, `strcat()`, and `strlen()`. Consider using safer alternatives that take the size of the buffer as a parameter, such as `strncpy()`, `strncat()`, and `strnlen()`.\n\n## Source Code Fix Recommendation\n\nInstead of using `strlen(num)`, use `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of the string. This will prevent `strnlen()` from reading beyond the end of the buffer.\n\n```cpp\n#include <string.h>\n\n#define MAX_LEN 100\n\nchar num[MAX_LEN + 1];  // +1 for the null character\n\n// ...\n\nsize_t len = strnlen(num, MAX_LEN);\n```\n\n## Library Dependencies\n\nThe `strlen()` and `strnlen()` functions are part of the C standard library, so you need to include the `<string.h>` header.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
               },
               "properties": {
                 "tags": [
@@ -78,10 +71,165 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "glog-d239d392-21ca-4758-a5be-e9298ae69f9c",
+          "ruleId": "glog-13527d42-55b0-41ec-b4ee-c88850946f78",
           "kind": "fail",
           "level": "note",
-          "message": {},
+          "message": {
+            "text": "\"Detected Issue with C Function (malloc)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 620,
+                  "startColumn": 18,
+                  "endLine": 620,
+                  "endColumn": 33,
+                  "charOffset": 19738,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "malloc((size_t)",
+                    "rendered": {
+                      "text": "malloc((size_t)",
+                      "markdown": "`malloc((size_t)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 19738,
+                        "charLength": 15
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-a6524826-b853-4b0e-92e7-489113ecbccc",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 497,
+                  "startColumn": 19,
+                  "endLine": 497,
+                  "endColumn": 30,
+                  "charOffset": 16194,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "strlen(num)",
+                    "rendered": {
+                      "text": "strlen(num)",
+                      "markdown": "`strlen(num)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 16194,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(num, <size of num>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 16194,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(num, <size of num>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-af905d00-2061-46a4-92ae-baa2cbd66f3f",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (strlen)"
+          },
           "locations": [
             {
               "physicalLocation": {
@@ -164,136 +312,12 @@
           }
         },
         {
-          "ruleId": "glog-f1162774-846c-4442-bcb1-8e570513ba3c",
+          "ruleId": "glog-5ad8cd43-c657-45d6-8d09-c31d3464b087",
           "kind": "fail",
           "level": "note",
-          "message": {},
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 639,
-                  "startColumn": 18,
-                  "endLine": 639,
-                  "endColumn": 33,
-                  "charOffset": 20313,
-                  "charLength": 15,
-                  "snippet": {
-                    "text": "malloc((size_t)",
-                    "rendered": {
-                      "text": "malloc((size_t)",
-                      "markdown": "`malloc((size_t)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 20313,
-                        "charLength": 15
-                      },
-                      "insertedContent": {
-                        "text": "calloc(<number of elements>, <size of each element>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-7507dac9-9e71-4449-afe0-740c5a0e4b8b",
-          "kind": "fail",
-          "level": "note",
-          "message": {},
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 620,
-                  "startColumn": 18,
-                  "endLine": 620,
-                  "endColumn": 33,
-                  "charOffset": 19738,
-                  "charLength": 15,
-                  "snippet": {
-                    "text": "malloc((size_t)",
-                    "rendered": {
-                      "text": "malloc((size_t)",
-                      "markdown": "`malloc((size_t)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 19738,
-                        "charLength": 15
-                      },
-                      "insertedContent": {
-                        "text": "calloc(<number of elements>, <size of each element>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-27fde195-98f0-4009-bf27-1a9026cb4896",
-          "kind": "fail",
-          "level": "note",
-          "message": {},
+          "message": {
+            "text": "Detected Vulnerability in C Function (strlen)"
+          },
           "locations": [
             {
               "physicalLocation": {
