@@ -12,10 +12,22 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "de4390af-66f0-30e1-b0b5-8520e8b0b930",
+              "id": "5ccdbe1a-1408-3b01-ab12-5cd61ec1f1d8",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\n\"Prohibited C Function Identified\" is a vulnerability that arises when a program uses a function that can lead to a security risk. In this case, the function `atoi()` is used, which is a standard C library function that converts a string to an integer. The problem with `atoi()` is that it does not perform any error checking. If the input string is not a valid integer, `atoi()` will return 0, which can lead to unexpected behavior if not handled properly.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives that perform error checking. In C++, the `std::stoi()` function can be used as it throws an exception if the conversion fails. This allows the program to handle the error in a controlled manner.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `std::stoi()`. Here is how you can do it:\n\n```cpp\n#include <string>\n#include <cstdlib>\n\ntry {\n    NTPS = std::stoi(num);\n} catch (std::invalid_argument const &e) {\n    // Handle the case where 'num' is not a valid integer\n} catch (std::out_of_range const &e) {\n    // Handle the case where 'num' is out of the range of an integer\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<string>`: This is a standard C++ library that provides support for strings.\n- `<cstdlib>`: This is a standard C library that provides general purpose functions, including `atoi()`.\n\n## References\n\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
+                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen` will keep reading memory until it encounters a null character, which can lead to buffer overflows, segmentation faults, or other undefined behavior.\n\nIn the provided code snippet, `strlen(num) + 1` is used to increment a pointer (`lineptr`). If `num` is not a null-terminated string, `strlen(num)` could read beyond the allocated memory for `num`, leading to undefined behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character or by manually adding a null character at the end of your strings.\n\nAlso, consider using safer alternatives to `strlen` such as `strnlen`, which takes an additional parameter specifying the maximum number of characters to read. This can prevent reading beyond the allocated memory even if the string is not null-terminated.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(num)` with `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of `num`. This ensures that `strnlen` does not read beyond `MAX_LEN` characters, even if `num` is not null-terminated.\n\n```cpp\nlineptr += strnlen(num, MAX_LEN) + 1;\n```\n\n## Library Dependencies\n\nThe code example requires the `cstring` library for the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "4da48bce-1990-3daf-b643-c96f6ef01271",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe \"Prohibited C Function Identified\" vulnerability refers to the use of certain C library functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other security issues. In this case, the function `atoi()` is used, which can lead to integer overflow or underflow if the input string represents a number outside the range of representable integer values.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these functions that include proper error handling and boundary checks. For `atoi()`, a safer alternative is `strtol()` or `std::stoi` in C++, which allows for error checking.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `strtol()` or `std::stoi` as shown below:\n\n```cpp\n#include <cstdlib> // for strtol\n#include <string>  // for std::stoi\n\nchar *num;\nlong j;\n\n// Using strtol\nchar *end;\nj = strtol(num, &end, 10);\nif (end == num) {\n    // handle error: no number found in the string\n} else if (*end != '\\0') {\n    // handle error: further characters after number\n}\n\n// Using std::stoi\ntry {\n    j = std::stoi(num);\n} catch (std::invalid_argument&) {\n    // handle error: no number found in the string\n} catch (std::out_of_range&) {\n    // handle error: number out of range of int\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstdlib>` for `strtol()`\n- `<string>` for `std::stoi`\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
               },
               "properties": {
                 "tags": [
@@ -28,18 +40,6 @@
               "help": {
                 "text": "",
                 "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure C library functions in C++ code. These functions are often prone to buffer overflow attacks, format string vulnerabilities, or integer overflows. In this case, the `atof()` function is used, which converts a string to a double. This function does not check for invalid input or overflow, which can lead to unexpected behavior or security vulnerabilities.\n\n## Mitigation Advice\n\nAvoid using C library functions that do not perform bounds checking or input validation. Instead, use safer alternatives provided by the C++ Standard Library. For example, instead of `atof()`, you can use `std::stod()` which throws an exception if the conversion cannot be performed.\n\n## Source Code Fix Recommendation\n\nReplace the `atof()` function with `std::stod()`:\n\n```cpp\ntry {\n    TEST->thrsh = std::stod(num);\n} catch (const std::invalid_argument& ia) {\n    // Handle the exception\n} catch (const std::out_of_range& oor) {\n    // Handle the exception\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n- `<cstdlib>` for `atof()`\n- `<string>` for `std::stod()`\n\n## References\n\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "4da48bce-1990-3daf-b643-c96f6ef01271",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe \"Prohibited C Function Identified\" vulnerability refers to the use of certain C library functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other security issues. In this case, the function `atoi()` is used, which can lead to integer overflow or underflow if the input string represents a number outside the range of representable integer values.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these functions that include proper error handling and boundary checks. For `atoi()`, a safer alternative is `strtol()` or `std::stoi` in C++, which allows for error checking.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `strtol()` or `std::stoi` as shown below:\n\n```cpp\n#include <cstdlib> // for strtol\n#include <string>  // for std::stoi\n\nchar *num;\nlong j;\n\n// Using strtol\nchar *end;\nj = strtol(num, &end, 10);\nif (end == num) {\n    // handle error: no number found in the string\n} else if (*end != '\\0') {\n    // handle error: further characters after number\n}\n\n// Using std::stoi\ntry {\n    j = std::stoi(num);\n} catch (std::invalid_argument&) {\n    // handle error: no number found in the string\n} catch (std::out_of_range&) {\n    // handle error: number out of range of int\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstdlib>` for `strtol()`\n- `<string>` for `std::stoi`\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
               },
               "properties": {
                 "tags": [
@@ -84,30 +84,6 @@
               }
             },
             {
-              "id": "9bfa3e2a-f4e2-3dae-a074-23a218591a5c",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen` will keep reading memory until it encounters a null character, which can lead to buffer overflows, segmentation faults, or other undefined behavior.\n\nIn the provided code snippet, `strlen(num) + 1` is used to increment a pointer (`lineptr`). If `num` is not a null-terminated string, `strlen(num)` could read beyond the allocated memory for `num`, leading to undefined behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character or by manually adding a null character at the end of your strings.\n\nAlso, consider using safer alternatives to `strlen` such as `strnlen`, which takes an additional parameter specifying the maximum number of characters to read. This can prevent reading beyond the allocated memory even if the string is not null-terminated.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(num)` with `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of `num`. This ensures that `strnlen` does not read beyond `MAX_LEN` characters, even if `num` is not null-terminated.\n\n```cpp\nlineptr += strnlen(num, MAX_LEN) + 1;\n```\n\n## Library Dependencies\n\nThe code example requires the `cstring` library for the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS140021"
-                ]
-              }
-            },
-            {
-              "id": "5ccdbe1a-1408-3b01-ab12-5cd61ec1f1d8",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen` will keep reading memory until it encounters a null character, which can lead to buffer overflows, segmentation faults, or other undefined behavior.\n\nIn the provided code snippet, `strlen(num) + 1` is used to increment a pointer (`lineptr`). If `num` is not a null-terminated string, `strlen(num)` could read beyond the allocated memory for `num`, leading to undefined behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character or by manually adding a null character at the end of your strings.\n\nAlso, consider using safer alternatives to `strlen` such as `strnlen`, which takes an additional parameter specifying the maximum number of characters to read. This can prevent reading beyond the allocated memory even if the string is not null-terminated.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(num)` with `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of `num`. This ensures that `strnlen` does not read beyond `MAX_LEN` characters, even if `num` is not null-terminated.\n\n```cpp\nlineptr += strnlen(num, MAX_LEN) + 1;\n```\n\n## Library Dependencies\n\nThe code example requires the `cstring` library for the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS140021"
-                ]
-              }
-            },
-            {
               "id": "5d9b07fd-aa2d-33ea-8eed-e6e238b8d395",
               "help": {
                 "text": "",
@@ -120,6 +96,18 @@
               }
             },
             {
+              "id": "9bfa3e2a-f4e2-3dae-a074-23a218591a5c",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen` will keep reading memory until it encounters a null character, which can lead to buffer overflows, segmentation faults, or other undefined behavior.\n\nIn the provided code snippet, `strlen(num) + 1` is used to increment a pointer (`lineptr`). If `num` is not a null-terminated string, `strlen(num)` could read beyond the allocated memory for `num`, leading to undefined behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character or by manually adding a null character at the end of your strings.\n\nAlso, consider using safer alternatives to `strlen` such as `strnlen`, which takes an additional parameter specifying the maximum number of characters to read. This can prevent reading beyond the allocated memory even if the string is not null-terminated.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(num)` with `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of `num`. This ensures that `strnlen` does not read beyond `MAX_LEN` characters, even if `num` is not null-terminated.\n\n```cpp\nlineptr += strnlen(num, MAX_LEN) + 1;\n```\n\n## Library Dependencies\n\nThe code example requires the `cstring` library for the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
               "id": "0fd73b8f-ef59-33d6-8438-e827a1b01253",
               "help": {
                 "text": "",
@@ -128,6 +116,18 @@
               "properties": {
                 "tags": [
                   "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "1f11d73f-2b06-3009-bb8f-f7951f1d63a7",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen` will keep reading memory until it encounters a null character, which can lead to buffer overflows, segmentation faults, or other undefined behavior.\n\nIn the provided code snippet, `strlen(num) + 1` is used to increment a pointer (`lineptr`). If `num` is not a null-terminated string, `strlen(num)` could read beyond the allocated memory for `num`, leading to undefined behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character or by manually adding a null character at the end of your strings.\n\nAlso, consider using safer alternatives to `strlen` such as `strnlen`, which takes an additional parameter specifying the maximum number of characters to read. This can prevent reading beyond the allocated memory even if the string is not null-terminated.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(num)` with `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of `num`. This ensures that `strnlen` does not read beyond `MAX_LEN` characters, even if `num` is not null-terminated.\n\n```cpp\nlineptr += strnlen(num, MAX_LEN) + 1;\n```\n\n## Library Dependencies\n\nThe code example requires the `cstring` library for the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
                 ]
               }
             },
@@ -168,6 +168,30 @@
               }
             },
             {
+              "id": "49aba3a9-cef7-3190-a57d-07991454420c",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of certain C standard library functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other issues that can lead to arbitrary code execution or denial of service. In this case, the function `atoi()` is used, which can lead to integer overflow or underflow if the input string represents a number outside the range of representable integer values.\n\n## Mitigation Advice\n\nAvoid using unsafe C functions. Instead, use safer alternatives that perform bounds checking or that are not susceptible to the same vulnerabilities. For `atoi()`, a safer alternative is `strtol()`, which allows for error checking.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `strtol()`. Here is an example of how to do it:\n\n```cpp\n#include <cstdlib>\n#include <cerrno>\n\nconst char *num = \"123\";\nchar *end;\nlong int fid = strtol(num, &end, 10);\n\nif (end == num) {\n    // handle error: no digits were found\n} else if ((fid == LONG_MAX || fid == LONG_MIN) && errno == ERANGE) {\n    // handle error: number out of range for long\n} else if (*end != '\\0') {\n    // handle error: string has non-digit characters after the number\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstdlib>`: for `strtol()`\n- `<cerrno>`: for `errno`\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "adf00b6f-5f35-32d8-a70e-1bfc8de7e890",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that arises when a C++ program uses a function that is considered unsafe due to its potential to cause buffer overflows, format string vulnerabilities, or other types of security issues. In this case, the `fopen` function is used, which can lead to vulnerabilities if the input is not properly validated or sanitized.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to the `fopen` function. In C++, the `fstream` library provides the `ifstream` and `ofstream` classes that can be used to open files for reading and writing in a safer manner. \n\n## Source Code Fix Recommendation\n\nHere is a recommended fix for the code:\n\n```cpp\n#include <fstream>\n\nstd::ifstream infp(inputFileName.c_str());\nif (!infp) {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<fstream>`\n\n## References\n\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
               "id": "32d5c081-e578-3be9-9da4-d5af1d3a4c92",
               "help": {
                 "text": "",
@@ -192,18 +216,6 @@
               }
             },
             {
-              "id": "adf00b6f-5f35-32d8-a70e-1bfc8de7e890",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that arises when a C++ program uses a function that is considered unsafe due to its potential to cause buffer overflows, format string vulnerabilities, or other types of security issues. In this case, the `fopen` function is used, which can lead to vulnerabilities if the input is not properly validated or sanitized.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to the `fopen` function. In C++, the `fstream` library provides the `ifstream` and `ofstream` classes that can be used to open files for reading and writing in a safer manner. \n\n## Source Code Fix Recommendation\n\nHere is a recommended fix for the code:\n\n```cpp\n#include <fstream>\n\nstd::ifstream infp(inputFileName.c_str());\nif (!infp) {\n    // Handle error\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<fstream>`\n\n## References\n\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
               "id": "db2a9171-5fca-317e-ac57-036b894d9c89",
               "help": {
                 "text": "",
@@ -216,22 +228,22 @@
               }
             },
             {
-              "id": "1f11d73f-2b06-3009-bb8f-f7951f1d63a7",
+              "id": "41e7c10f-c8e3-3007-a7ef-be62cf47822c",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`'\\0'`). If the string is not null-terminated, `strlen` will keep reading memory until it encounters a null character, which can lead to buffer overflows, segmentation faults, or other undefined behavior.\n\nIn the provided code snippet, `strlen(num) + 1` is used to increment a pointer (`lineptr`). If `num` is not a null-terminated string, `strlen(num)` could read beyond the allocated memory for `num`, leading to undefined behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character or by manually adding a null character at the end of your strings.\n\nAlso, consider using safer alternatives to `strlen` such as `strnlen`, which takes an additional parameter specifying the maximum number of characters to read. This can prevent reading beyond the allocated memory even if the string is not null-terminated.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(num)` with `strnlen(num, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of `num`. This ensures that `strnlen` does not read beyond `MAX_LEN` characters, even if `num` is not null-terminated.\n\n```cpp\nlineptr += strnlen(num, MAX_LEN) + 1;\n```\n\n## Library Dependencies\n\nThe code example requires the `cstring` library for the `strlen` function.\n\n```cpp\n#include <cstring>\n```\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure C library functions in C++ code. These functions are often prone to buffer overflow attacks, format string vulnerabilities, or integer overflows. In this case, the function `atoi()` is used, which can lead to integer overflow if the input string represents a number larger than `INT_MAX`.\n\n## Mitigation Advice\n\nAvoid using C library functions that do not perform bounds checking or that are susceptible to integer overflows. Instead, use safer alternatives provided by the C++ Standard Library. For instance, instead of `atoi()`, consider using `std::stoi()` which throws an exception if the conversion cannot be performed or if the converted value is out of the range of representable values for an int.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `std::stoi()`. Here is the fixed code:\n\n```cpp\ntry {\n    n = std::stoi(ARGV[i + 1]);\n} catch (std::invalid_argument& e) {\n    // handle error: the conversion couldn't be performed\n} catch (std::out_of_range& e) {\n    // handle error: the converted value would fall out of the range of the result type\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <string>\n```\n\n## References\n\n- [CWE-190: Integer Overflow or Wraparound](https://cwe.mitre.org/data/definitions/190.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
               },
               "properties": {
                 "tags": [
-                  "DS140021"
+                  "DS154189"
                 ]
               }
             },
             {
-              "id": "49aba3a9-cef7-3190-a57d-07991454420c",
+              "id": "9a150f58-ce03-33ca-afba-c4ce89c1674d",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of certain C standard library functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other issues that can lead to arbitrary code execution or denial of service. In this case, the function `atoi()` is used, which can lead to integer overflow or underflow if the input string represents a number outside the range of representable integer values.\n\n## Mitigation Advice\n\nAvoid using unsafe C functions. Instead, use safer alternatives that perform bounds checking or that are not susceptible to the same vulnerabilities. For `atoi()`, a safer alternative is `strtol()`, which allows for error checking.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `strtol()`. Here is an example of how to do it:\n\n```cpp\n#include <cstdlib>\n#include <cerrno>\n\nconst char *num = \"123\";\nchar *end;\nlong int fid = strtol(num, &end, 10);\n\nif (end == num) {\n    // handle error: no digits were found\n} else if ((fid == LONG_MAX || fid == LONG_MIN) && errno == ERANGE) {\n    // handle error: number out of range for long\n} else if (*end != '\\0') {\n    // handle error: string has non-digit characters after the number\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstdlib>`: for `strtol()`\n- `<cerrno>`: for `errno`\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
+                "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that occurs when a program uses a function that is considered unsafe due to its potential for causing buffer overflows, format string vulnerabilities, or other types of security issues. In this case, the function `atoi()` is used, which is a standard library function in C++ that converts a string to an integer. The problem with `atoi()` is that it does not perform any error checking, so if the string cannot be converted into an integer, it will return 0, which can lead to unexpected behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should replace the `atoi()` function with a safer alternative that performs error checking, such as `strtol()`, `sscanf()`, or `stoi()` (for C++11 and later). These functions will allow you to detect and handle errors when the string cannot be converted into an integer.\n\n## Source Code Fix Recommendation\n\nHere is how you can replace `atoi()` with `strtol()`:\n\n```cpp\nchar *end;\nlong int value = strtol(ARGV[i + 1], &end, 10);\n\nif (end == ARGV[i + 1] || *end != '\\0' || errno == ERANGE) {\n    // handle error\n} else {\n    _q = value;\n}\n```\n\nIn this code, `strtol()` will set `end` to point to the first invalid character in the string, or to the null terminator if the entire string is valid. If `end` is equal to the start of the string, or if `*end` is not the null terminator, or if `errno` is `ERANGE` (which indicates that the value is out of range), then an error has occurred.\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstdlib>`: for `strtol()`\n- `<cerrno>`: for `errno`\n\n## References\n\n- [OWASP Prohibited C Functions](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html#prohibited-c-library-functions)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
               },
               "properties": {
                 "tags": [
@@ -288,22 +300,10 @@
               }
             },
             {
-              "id": "41e7c10f-c8e3-3007-a7ef-be62cf47822c",
+              "id": "d31c3f01-d0c4-33ff-b6e6-341654bd9a3c",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure C library functions in C++ code. These functions are often prone to buffer overflow attacks, format string vulnerabilities, or integer overflows. In this case, the function `atoi()` is used, which can lead to integer overflow if the input string represents a number larger than `INT_MAX`.\n\n## Mitigation Advice\n\nAvoid using C library functions that do not perform bounds checking or that are susceptible to integer overflows. Instead, use safer alternatives provided by the C++ Standard Library. For instance, instead of `atoi()`, consider using `std::stoi()` which throws an exception if the conversion cannot be performed or if the converted value is out of the range of representable values for an int.\n\n## Source Code Fix Recommendation\n\nReplace the `atoi()` function with `std::stoi()`. Here is the fixed code:\n\n```cpp\ntry {\n    n = std::stoi(ARGV[i + 1]);\n} catch (std::invalid_argument& e) {\n    // handle error: the conversion couldn't be performed\n} catch (std::out_of_range& e) {\n    // handle error: the converted value would fall out of the range of the result type\n}\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <string>\n```\n\n## References\n\n- [CWE-190: Integer Overflow or Wraparound](https://cwe.mitre.org/data/definitions/190.html)\n\nPlease note that the links provided are active and accessible to anonymous users at the time of writing this report."
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "9a150f58-ce03-33ca-afba-c4ce89c1674d",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that occurs when a program uses a function that is considered unsafe due to its potential for causing buffer overflows, format string vulnerabilities, or other types of security issues. In this case, the function `atoi()` is used, which is a standard library function in C++ that converts a string to an integer. The problem with `atoi()` is that it does not perform any error checking, so if the string cannot be converted into an integer, it will return 0, which can lead to unexpected behavior.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should replace the `atoi()` function with a safer alternative that performs error checking, such as `strtol()`, `sscanf()`, or `stoi()` (for C++11 and later). These functions will allow you to detect and handle errors when the string cannot be converted into an integer.\n\n## Source Code Fix Recommendation\n\nHere is how you can replace `atoi()` with `strtol()`:\n\n```cpp\nchar *end;\nlong int value = strtol(ARGV[i + 1], &end, 10);\n\nif (end == ARGV[i + 1] || *end != '\\0' || errno == ERANGE) {\n    // handle error\n} else {\n    _q = value;\n}\n```\n\nIn this code, `strtol()` will set `end` to point to the first invalid character in the string, or to the null terminator if the entire string is valid. If `end` is equal to the start of the string, or if `*end` is not the null terminator, or if `errno` is `ERANGE` (which indicates that the value is out of range), then an error has occurred.\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstdlib>`: for `strtol()`\n- `<cerrno>`: for `errno`\n\n## References\n\n- [OWASP Prohibited C Functions](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html#prohibited-c-library-functions)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)"
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ programming language refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. One such function is `printf`.\n\nThe `printf` function is a common function in C and C++ for outputting text. However, it can be dangerous if used improperly, especially when handling user-supplied input. This is because `printf` can interpret certain special characters (like `%s`, `%d`, etc.) and if an attacker can control the format string, they can potentially exploit this to execute arbitrary code, read from or write to arbitrary memory locations, or cause the program to crash.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using `printf` with user-supplied input. Instead, use safer alternatives that do not interpret format strings, such as `puts` or `fputs`. If you need to format strings, use functions like `snprintf` that limit the amount of output, and always use a static format string.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\nchar* user_input = get_user_input();\nprintf(user_input);\n```\n\nUse:\n\n```cpp\nchar* user_input = get_user_input();\nputs(user_input);\n```\n\nOr, if you need to format strings:\n\n```cpp\nchar* user_input = get_user_input();\nchar buffer[256];\nsnprintf(buffer, sizeof(buffer), \"%s\", user_input);\nputs(buffer);\n```\n\n## Library Dependencies\n\nThe code examples above require the following library:\n\n```cpp\n#include <stdio.h>\n```\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
               },
               "properties": {
                 "tags": [
@@ -324,106 +324,10 @@
               }
             },
             {
-              "id": "d9575098-4d87-3073-a64c-2f8a2795a239",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of insecure C library functions that can lead to various security issues such as buffer overflows, format string vulnerabilities, and integer overflows. In the provided code snippet, the `printf` function is used which can lead to format string vulnerabilities if user-controlled input is passed without proper sanitization.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these insecure C functions. For instance, instead of `printf`, one can use `puts` or `fputs` for printing strings. If `printf` is necessary, make sure to use it with a format specifier. Avoid passing user-controlled input directly to these functions without proper sanitization and validation.\n\n## Source Code Fix Recommendation\n\nHere is the fixed version of the provided code snippet:\n\n```cpp\nputs(\"-------------------------------------------------------------------\"\n     \"-------------------------------------------------------------------\"\n     \"------------------------------\\n\");\n```\n\n## Library Dependencies\n\nThe code example requires the `stdio.h` library to execute properly.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "1741d439-d698-31ae-ac20-08a84ce9f657",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of certain C standard library functions that are considered unsafe due to their potential to cause buffer overflow, format string vulnerabilities, or other issues that can lead to arbitrary code execution or denial of service. In this case, the `printf` function is used, which can lead to format string vulnerabilities if user-controlled input is passed as the format string.\n\n## Mitigation Advice\n\nAvoid using unsafe C functions. Instead, use safer alternatives provided by the C++ Standard Library or other libraries. For example, instead of `printf`, you can use `std::cout` or `std::printf` with fixed format strings. Always validate and sanitize user input to prevent injection attacks.\n\n## Source Code Fix Recommendation\n\nReplace the `printf` function with `std::cout`:\n\n```cpp\n#include <iostream>\n\nint main() {\n    std::cout << \"       |           |               | Diagonal |    L     |    U     | Trailing |            |            |            |               |             |               \\n\";\n    return 0;\n}\n```\n\n## Library Dependencies\n\nThe code example requires the C standard library, which is typically included by default in C++ environments.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "d2c2a863-fe41-31c1-9519-7dc5d39e0365",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe \"Prohibited C Function Identified\" vulnerability refers to the use of certain C functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other security issues. In this case, the `printf` function is used, which can lead to format string vulnerabilities if user-controlled input is passed directly into it.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these functions. For example, instead of `printf`, you can use `fprintf` or `snprintf` which allow you to specify the size of the output buffer, thus preventing buffer overflows. Also, avoid passing user-controlled input directly into these functions. Instead, use format specifiers and pass the user input as arguments.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code using `fprintf`:\n\n```cpp\nfprintf(stdout, \"   %%   | Column    | Step Time (s) ||               GEMM GFLOPS   \"\n           \"            || Dbcast (s) | Lbcast (s) | Ubcast (s) |  GPU Sync \"\n           \"(s) | Step GFLOPS | Overall GFLOPS\\n\");\n```\n\n## Library Dependencies\n\nThe code example does not require any additional library dependencies beyond the standard C++ libraries.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
               "id": "985fad13-572a-32dc-89db-39a90a10b38b",
               "help": {
                 "text": "",
                 "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ programming language refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. One such function is `printf`.\n\nThe `printf` function is a common function in C and C++ for outputting text. However, it can be dangerous if used improperly, especially when handling user-supplied input. This is because `printf` can interpret certain special characters (like `%s`, `%d`, etc.) and if an attacker can control the format string, they can potentially exploit this to execute arbitrary code, read from or write to arbitrary memory locations, or cause the program to crash.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using `printf` with user-supplied input. Instead, use safer alternatives that do not interpret format strings, such as `puts` or `fputs`. If you need to format strings, use functions like `snprintf` that limit the amount of output, and always use a static format string.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\nchar* user_input = get_user_input();\nprintf(user_input);\n```\n\nUse:\n\n```cpp\nchar* user_input = get_user_input();\nputs(user_input);\n```\n\nOr, if you need to format strings:\n\n```cpp\nchar* user_input = get_user_input();\nchar buffer[256];\nsnprintf(buffer, sizeof(buffer), \"%s\", user_input);\nputs(buffer);\n```\n\n## Library Dependencies\n\nThe code examples above require the following library:\n\n```cpp\n#include <stdio.h>\n```\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "d31c3f01-d0c4-33ff-b6e6-341654bd9a3c",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ programming language refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. One such function is `printf`.\n\nThe `printf` function is a common function in C and C++ for outputting text. However, it can be dangerous if used improperly, especially when handling user-supplied input. This is because `printf` can interpret certain special characters (like `%s`, `%d`, etc.) and if an attacker can control the format string, they can potentially exploit this to execute arbitrary code, read from or write to arbitrary memory locations, or cause the program to crash.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using `printf` with user-supplied input. Instead, use safer alternatives that do not interpret format strings, such as `puts` or `fputs`. If you need to format strings, use functions like `snprintf` that limit the amount of output, and always use a static format string.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\nchar* user_input = get_user_input();\nprintf(user_input);\n```\n\nUse:\n\n```cpp\nchar* user_input = get_user_input();\nputs(user_input);\n```\n\nOr, if you need to format strings:\n\n```cpp\nchar* user_input = get_user_input();\nchar buffer[256];\nsnprintf(buffer, sizeof(buffer), \"%s\", user_input);\nputs(buffer);\n```\n\n## Library Dependencies\n\nThe code examples above require the following library:\n\n```cpp\n#include <stdio.h>\n```\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "46550e4b-c2ea-3c27-bc76-0d22b5072284",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure or unsafe C functions in a C++ program. These functions are considered unsafe because they do not perform bounds checking, which can lead to buffer overflow vulnerabilities. In this case, the `vsprintf()` function is used, which does not check the size of the output buffer, `cline`, before writing to it. If the size of the formatted data from `FORM` and `argptr` exceeds the size of `cline`, it will result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use safer alternatives that perform bounds checking. In C++, the `snprintf()` or `vsnprintf()` functions can be used instead of `vsprintf()`. These functions take an additional size argument which is the maximum number of bytes to be used in the buffer. This prevents buffer overflow by ensuring that the function does not write past the buffer.\n\n## Source Code Fix Recommendation\n\nReplace the `vsprintf()` function with `vsnprintf()`. The size of the buffer, `cline`, should be passed as the second argument to `vsnprintf()`.\n\n```cpp\nvsnprintf(cline, sizeof(cline), FORM, argptr);\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <stdio.h>\n```\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "a188a6b6-0da7-3b89-9c8b-23ea214cfb3e",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure or unsafe C functions in a C++ program. These functions are considered unsafe because they do not perform bounds checking, which can lead to buffer overflow vulnerabilities. In this case, the `vsprintf()` function is used, which does not check the size of the output buffer, `cline`, before writing to it. If the size of the formatted data from `FORM` and `argptr` exceeds the size of `cline`, it will result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use safer alternatives that perform bounds checking. In C++, the `snprintf()` or `vsnprintf()` functions can be used instead of `vsprintf()`. These functions take an additional size argument which is the maximum number of bytes to be used in the buffer. This prevents buffer overflow by ensuring that the function does not write past the buffer.\n\n## Source Code Fix Recommendation\n\nReplace the `vsprintf()` function with `vsnprintf()`. The size of the buffer, `cline`, should be passed as the second argument to `vsnprintf()`.\n\n```cpp\nvsnprintf(cline, sizeof(cline), FORM, argptr);\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <stdio.h>\n```\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "d9eb3d43-9b2f-3635-bce0-a1deaf8708b5",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of insecure C library functions that can lead to various security issues such as buffer overflows, format string vulnerabilities, and integer overflows. In the provided code snippet, the `printf` function is used which can lead to format string vulnerabilities if user-controlled input is passed without proper sanitization.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives to these insecure C functions. For instance, instead of `printf`, one can use `puts` or `fputs` for printing strings. If `printf` is necessary, make sure to use it with a format specifier. Avoid passing user-controlled input directly to these functions without proper sanitization and validation.\n\n## Source Code Fix Recommendation\n\nHere is the fixed version of the provided code snippet:\n\n```cpp\nputs(\"-------------------------------------------------------------------\"\n     \"-------------------------------------------------------------------\"\n     \"------------------------------\\n\");\n```\n\n## Library Dependencies\n\nThe code example requires the `stdio.h` library to execute properly.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "5cc5b172-e407-3565-98ca-a1a9a6f06207",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability refers to the use of insecure or unsafe C functions in a C++ program. These functions are considered unsafe because they do not perform bounds checking, which can lead to buffer overflow vulnerabilities. In this case, the `vsprintf()` function is used, which does not check the size of the output buffer, `cline`, before writing to it. If the size of the formatted data from `FORM` and `argptr` exceeds the size of `cline`, it will result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use safer alternatives that perform bounds checking. In C++, the `snprintf()` or `vsnprintf()` functions can be used instead of `vsprintf()`. These functions take an additional size argument which is the maximum number of bytes to be used in the buffer. This prevents buffer overflow by ensuring that the function does not write past the buffer.\n\n## Source Code Fix Recommendation\n\nReplace the `vsprintf()` function with `vsnprintf()`. The size of the buffer, `cline`, should be passed as the second argument to `vsnprintf()`.\n\n```cpp\nvsnprintf(cline, sizeof(cline), FORM, argptr);\n```\n\n## Library Dependencies\n\nThe code example requires the following library:\n\n```cpp\n#include <stdio.h>\n```\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
               },
               "properties": {
                 "tags": [
@@ -563,6 +467,94 @@
           }
         },
         {
+          "ruleId": "5ccdbe1a-1408-3b01-ab12-5cd61ec1f1d8",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 571,
+                  "startColumn": 19,
+                  "endLine": 571,
+                  "endColumn": 30,
+                  "charOffset": 18529,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "strlen(num)",
+                    "rendered": {
+                      "text": "strlen(num)",
+                      "markdown": "`strlen(num)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 18529,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(num, <size of num>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 18529,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(num, <size of num>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
           "ruleId": "d6a127b8-97b5-300e-af56-d9253f35b05e",
           "kind": "fail",
           "level": "warning",
@@ -683,6 +675,46 @@
           }
         },
         {
+          "ruleId": "5d9b07fd-aa2d-33ea-8eed-e6e238b8d395",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 498,
+                  "startColumn": 20,
+                  "endLine": 498,
+                  "endColumn": 24,
+                  "charOffset": 16231,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "atoi",
+                    "rendered": {
+                      "text": "atoi",
+                      "markdown": "`atoi`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
           "ruleId": "9bfa3e2a-f4e2-3dae-a074-23a218591a5c",
           "kind": "fail",
           "level": "note",
@@ -771,134 +803,6 @@
           }
         },
         {
-          "ruleId": "5ccdbe1a-1408-3b01-ab12-5cd61ec1f1d8",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (strlen)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 571,
-                  "startColumn": 19,
-                  "endLine": 571,
-                  "endColumn": 30,
-                  "charOffset": 18529,
-                  "charLength": 11,
-                  "snippet": {
-                    "text": "strlen(num)",
-                    "rendered": {
-                      "text": "strlen(num)",
-                      "markdown": "`strlen(num)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 18529,
-                        "charLength": 11
-                      },
-                      "insertedContent": {
-                        "text": "strlen_s(num, <size of num>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "description": {
-                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 18529,
-                        "charLength": 11
-                      },
-                      "insertedContent": {
-                        "text": "strnlen(num, <size of num>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "5d9b07fd-aa2d-33ea-8eed-e6e238b8d395",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 498,
-                  "startColumn": 20,
-                  "endLine": 498,
-                  "endColumn": 24,
-                  "charOffset": 16231,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "atoi",
-                    "rendered": {
-                      "text": "atoi",
-                      "markdown": "`atoi`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
           "ruleId": "0fd73b8f-ef59-33d6-8438-e827a1b01253",
           "kind": "fail",
           "level": "warning",
@@ -935,6 +839,94 @@
             "DevSkimConfidence": "High",
             "tags": [
               "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "1f11d73f-2b06-3009-bb8f-f7951f1d63a7",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 467,
+                  "startColumn": 19,
+                  "endLine": 467,
+                  "endColumn": 30,
+                  "charOffset": 15257,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "strlen(num)",
+                    "rendered": {
+                      "text": "strlen(num)",
+                      "markdown": "`strlen(num)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 15257,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(num, <size of num>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/hplmxp_pinfo.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 15257,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(num, <size of num>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
             ]
           }
         },
@@ -1059,6 +1051,86 @@
           }
         },
         {
+          "ruleId": "49aba3a9-cef7-3190-a57d-07991454420c",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 433,
+                  "startColumn": 12,
+                  "endLine": 433,
+                  "endColumn": 16,
+                  "charOffset": 14178,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "atoi",
+                    "rendered": {
+                      "text": "atoi",
+                      "markdown": "`atoi`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "adf00b6f-5f35-32d8-a70e-1bfc8de7e890",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Prohibited C Function Found\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 414,
+                  "startColumn": 17,
+                  "endLine": 414,
+                  "endColumn": 22,
+                  "charOffset": 13507,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "fopen",
+                    "rendered": {
+                      "text": "fopen",
+                      "markdown": "`fopen`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
           "ruleId": "32d5c081-e578-3be9-9da4-d5af1d3a4c92",
           "kind": "fail",
           "level": "warning",
@@ -1139,46 +1211,6 @@
           }
         },
         {
-          "ruleId": "adf00b6f-5f35-32d8-a70e-1bfc8de7e890",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "\"Prohibited C Function Found\""
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 414,
-                  "startColumn": 17,
-                  "endLine": 414,
-                  "endColumn": 22,
-                  "charOffset": 13507,
-                  "charLength": 5,
-                  "snippet": {
-                    "text": "fopen",
-                    "rendered": {
-                      "text": "fopen",
-                      "markdown": "`fopen`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
           "ruleId": "db2a9171-5fca-317e-ac57-036b894d9c89",
           "kind": "fail",
           "level": "warning",
@@ -1219,95 +1251,7 @@
           }
         },
         {
-          "ruleId": "1f11d73f-2b06-3009-bb8f-f7951f1d63a7",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (strlen)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 467,
-                  "startColumn": 19,
-                  "endLine": 467,
-                  "endColumn": 30,
-                  "charOffset": 15257,
-                  "charLength": 11,
-                  "snippet": {
-                    "text": "strlen(num)",
-                    "rendered": {
-                      "text": "strlen(num)",
-                      "markdown": "`strlen(num)`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 15257,
-                        "charLength": 11
-                      },
-                      "insertedContent": {
-                        "text": "strlen_s(num, <size of num>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "description": {
-                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "src/hplmxp_pinfo.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 15257,
-                        "charLength": 11
-                      },
-                      "insertedContent": {
-                        "text": "strnlen(num, <size of num>)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "49aba3a9-cef7-3190-a57d-07991454420c",
+          "ruleId": "41e7c10f-c8e3-3007-a7ef-be62cf47822c",
           "kind": "fail",
           "level": "warning",
           "message": {
@@ -1320,11 +1264,51 @@
                   "uri": "src/hplmxp_pinfo.cpp"
                 },
                 "region": {
-                  "startLine": 433,
-                  "startColumn": 12,
-                  "endLine": 433,
-                  "endColumn": 16,
-                  "charOffset": 14178,
+                  "startLine": 228,
+                  "startColumn": 19,
+                  "endLine": 228,
+                  "endColumn": 23,
+                  "charOffset": 8733,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "atoi",
+                    "rendered": {
+                      "text": "atoi",
+                      "markdown": "`atoi`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "9a150f58-ce03-33ca-afba-c4ce89c1674d",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Prohibited C Function Found\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/hplmxp_pinfo.cpp"
+                },
+                "region": {
+                  "startLine": 222,
+                  "startColumn": 19,
+                  "endLine": 222,
+                  "endColumn": 23,
+                  "charOffset": 8580,
                   "charLength": 4,
                   "snippet": {
                     "text": "atoi",
@@ -1507,87 +1491,7 @@
           }
         },
         {
-          "ruleId": "41e7c10f-c8e3-3007-a7ef-be62cf47822c",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 228,
-                  "startColumn": 19,
-                  "endLine": 228,
-                  "endColumn": 23,
-                  "charOffset": 8733,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "atoi",
-                    "rendered": {
-                      "text": "atoi",
-                      "markdown": "`atoi`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "9a150f58-ce03-33ca-afba-c4ce89c1674d",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "\"Prohibited C Function Found\""
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/hplmxp_pinfo.cpp"
-                },
-                "region": {
-                  "startLine": 222,
-                  "startColumn": 19,
-                  "endLine": 222,
-                  "endColumn": 23,
-                  "charOffset": 8580,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "atoi",
-                    "rendered": {
-                      "text": "atoi",
-                      "markdown": "`atoi`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "04160525-1fa5-36d2-8038-335da0ccecf5",
+          "ruleId": "d31c3f01-d0c4-33ff-b6e6-341654bd9a3c",
           "kind": "fail",
           "level": "warning",
           "message": {
@@ -1600,131 +1504,11 @@
                   "uri": "src/pgesv/hplmxp_pgetrf.cpp"
                 },
                 "region": {
-                  "startLine": 92,
+                  "startLine": 93,
                   "startColumn": 4,
-                  "endLine": 92,
+                  "endLine": 93,
                   "endColumn": 10,
-                  "charOffset": 3282,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "d9575098-4d87-3073-a64c-2f8a2795a239",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pgesv/hplmxp_pgetrf.cpp"
-                },
-                "region": {
-                  "startLine": 86,
-                  "startColumn": 4,
-                  "endLine": 86,
-                  "endColumn": 10,
-                  "charOffset": 3019,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "1741d439-d698-31ae-ac20-08a84ce9f657",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pgesv/hplmxp_pgetrf.cpp"
-                },
-                "region": {
-                  "startLine": 82,
-                  "startColumn": 4,
-                  "endLine": 82,
-                  "endColumn": 10,
-                  "charOffset": 2795,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "d2c2a863-fe41-31c1-9519-7dc5d39e0365",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "\"Prohibited C Function Identified\""
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pgesv/hplmxp_pgetrf.cpp"
-                },
-                "region": {
-                  "startLine": 79,
-                  "startColumn": 4,
-                  "endLine": 79,
-                  "endColumn": 10,
-                  "charOffset": 2584,
+                  "charOffset": 3351,
                   "charLength": 6,
                   "snippet": {
                     "text": "printf",
@@ -1771,206 +1555,6 @@
                     "rendered": {
                       "text": "printf",
                       "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "d31c3f01-d0c4-33ff-b6e6-341654bd9a3c",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pgesv/hplmxp_pgetrf.cpp"
-                },
-                "region": {
-                  "startLine": 93,
-                  "startColumn": 4,
-                  "endLine": 93,
-                  "endColumn": 10,
-                  "charOffset": 3351,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "46550e4b-c2ea-3c27-bc76-0d22b5072284",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pauxil/hplmxp_pabort.cpp"
-                },
-                "region": {
-                  "startLine": 55,
-                  "startColumn": 8,
-                  "endLine": 55,
-                  "endColumn": 16,
-                  "charOffset": 1757,
-                  "charLength": 8,
-                  "snippet": {
-                    "text": "vsprintf",
-                    "rendered": {
-                      "text": "vsprintf",
-                      "markdown": "`vsprintf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "a188a6b6-0da7-3b89-9c8b-23ea214cfb3e",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/auxil/hplmxp_fprintf.cpp"
-                },
-                "region": {
-                  "startLine": 48,
-                  "startColumn": 8,
-                  "endLine": 48,
-                  "endColumn": 16,
-                  "charOffset": 1433,
-                  "charLength": 8,
-                  "snippet": {
-                    "text": "vsprintf",
-                    "rendered": {
-                      "text": "vsprintf",
-                      "markdown": "`vsprintf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "d9eb3d43-9b2f-3635-bce0-a1deaf8708b5",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pgesv/hplmxp_pgetrf.cpp"
-                },
-                "region": {
-                  "startLine": 76,
-                  "startColumn": 4,
-                  "endLine": 76,
-                  "endColumn": 10,
-                  "charOffset": 2374,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "5cc5b172-e407-3565-98ca-a1a9a6f06207",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/pauxil/hplmxp_pwarn.cpp"
-                },
-                "region": {
-                  "startLine": 62,
-                  "startColumn": 8,
-                  "endLine": 62,
-                  "endColumn": 16,
-                  "charOffset": 1939,
-                  "charLength": 8,
-                  "snippet": {
-                    "text": "vsprintf",
-                    "rendered": {
-                      "text": "vsprintf",
-                      "markdown": "`vsprintf`"
                     }
                   },
                   "sourceLanguage": "cpp"
